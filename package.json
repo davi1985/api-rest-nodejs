@@ -2,8 +2,16 @@
   "name": "api-rest-nodejs",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.20.6",
     "typescript": "^7.0.2"
   },
   "dependencies": {
