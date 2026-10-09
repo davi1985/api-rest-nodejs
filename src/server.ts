@@ -1,6 +1,6 @@
 import fastify from 'fastify'
-import crypto from 'node:crypto'
-import { knex } from './database.js'
+import { knex } from './database'
+import { env } from './env'
 
 const app = fastify()
 
@@ -18,7 +18,7 @@ app.get('/', async (request, reply) => {
   return { transactions }
 })
 
-app.listen({ port: 3000 }, (err, address) => {
+app.listen({ port: env.PORT }, (err, address) => {
   if (err) {
     console.error(err)
     process.exit(1)

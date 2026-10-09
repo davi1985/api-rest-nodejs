@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "lib": ["ES2024"],
-    "module": "NodeNext",
+    "module": "ESNext",
     "target": "ES2024",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Bundler",
     "outDir": "./dist",
     "rootDir": "./src",
     "esModuleInterop": true,
