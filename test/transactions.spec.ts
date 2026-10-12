@@ -1,6 +1,7 @@
 import { describe, it, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { buildApp } from '@/app'
+import { knex } from '@/db'
 import { httpCodes } from '@/utils/http-code'
 
 let app: Awaited<ReturnType<typeof buildApp>>
@@ -15,16 +16,18 @@ type Transaction = {
 
 describe('Transactions', () => {
   before(async () => {
+    await knex.migrate.latest()
     app = await buildApp()
     await app.ready()
   })
 
   after(async () => {
     await app.close()
+    await knex.destroy()
   })
 
   it('should be able to create a new transaction', async () => {
-    const response = await app.inject({
+    const { statusCode } = await app.inject({
       method: 'POST',
       url: '/transactions',
       payload: {
@@ -34,11 +37,11 @@ describe('Transactions', () => {
       },
     })
 
-    assert.equal(response.statusCode, httpCodes.CREATED)
+    assert.equal(statusCode, httpCodes.CREATED)
   })
 
   it('should be able to list all transactions', async () => {
-    const createTransactionResponse = await app.inject({
+    const { cookies } = await app.inject({
       method: 'POST',
       url: '/transactions',
       payload: {
@@ -48,9 +51,7 @@ describe('Transactions', () => {
       },
     })
 
-    const sessionId = createTransactionResponse.cookies.find(
-      (cookie) => cookie.name === 'sessionId',
-    )?.value
+    const sessionId = cookies.find(({ name }) => name === 'sessionId')?.value
 
     assert.ok(sessionId)
 
@@ -62,13 +63,13 @@ describe('Transactions', () => {
 
     assert.equal(allTransactionsResponse.statusCode, httpCodes.OK)
 
-    const body = allTransactionsResponse.json<{
+    const { transactions } = allTransactionsResponse.json<{
       transactions: Transaction[]
     }>()
 
-    assert.equal(body.transactions.length, 1)
-    assert.equal(body.transactions[0].title, 'New transaction')
-    assert.equal(body.transactions[0].amount, 5000)
-    assert.equal(body.transactions[0].session_id, sessionId)
+    assert.equal(transactions.length, 1)
+    assert.equal(transactions[0].title, 'New transaction')
+    assert.equal(transactions[0].amount, 5000)
+    assert.equal(transactions[0].session_id, sessionId)
   })
 })

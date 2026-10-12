@@ -72,6 +72,11 @@ See `.env.example` for a ready-to-use template.
 | `yarn typecheck`   | Type-check the project with `tsc --noEmit`           |
 | `yarn lint`        | Run ESLint                                           |
 | `yarn lint:fix`    | Run ESLint and apply automatic fixes                 |
+| `yarn test`        | Run tests using the `.env.test` configuration        |
+
+Before running tests, create `.env.test` from `.env.test.example`. The test suite
+applies pending migrations to the SQLite database configured there, separate
+from the development database.
 
 ## API
 

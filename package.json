@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "node --no-warnings --import tsx --test \"test/**/*.spec.ts\""
+    "test": "node --env-file=.env.test --no-warnings --import tsx --test \"test/**/*.spec.ts\""
   },
   "devDependencies": {
     "@eslint/js": "^10",
