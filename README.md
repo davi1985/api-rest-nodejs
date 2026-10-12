@@ -1,7 +1,7 @@
 # api-rest-nodejs
 
 [![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/davi1985/api-rest-nodejs?utm_source=readme&utm_medium=badge)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/davi1985/api-rest-nodejs)
+
 
 A REST API for managing financial transactions, built with Fastify, Knex and SQLite.
 Each client gets an isolated set of transactions through a session cookie: the API
