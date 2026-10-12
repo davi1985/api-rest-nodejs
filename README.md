@@ -176,7 +176,3 @@ Import paths under `src` can use the `@/*` alias (configured in `tsconfig.json`)
 A centralized error handler in `app.ts` translates `ZodError` thrown by request
 validation into a structured `400` response and masks any other error as a generic
 `500`, so internal details are never leaked to clients.
-
-## License
-
-MIT
