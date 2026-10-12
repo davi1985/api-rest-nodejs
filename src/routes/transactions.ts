@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify'
 import { randomUUID } from 'node:crypto'
 import { knex } from '../database'
 import z from 'zod'
-import { HTTP_CODES } from '../utils/http-code'
+import { httpCodes } from '../utils/http-code'
 import { checkSessionIdExists } from '../middlewares/check-session-id-exists'
 
 export const transactionsRoutes = async (app: FastifyInstance) => {
@@ -40,7 +40,7 @@ export const transactionsRoutes = async (app: FastifyInstance) => {
         .first()
 
       if (!transaction) {
-        return reply.status(HTTP_CODES.NOT_FOUND).send({
+        return reply.status(httpCodes.NOT_FOUND).send({
           error: 'Transaction not found',
         })
       }
@@ -82,7 +82,7 @@ export const transactionsRoutes = async (app: FastifyInstance) => {
         })
         .returning('*')
 
-      return reply.status(HTTP_CODES.CREATED).send({ transaction })
+      return reply.status(httpCodes.CREATED).send({ transaction })
     },
   )
 

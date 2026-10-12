@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { HTTP_CODES } from '../utils/http-code'
+import { httpCodes } from '../utils/http-code'
 
 export const checkSessionIdExists = async (
   request: FastifyRequest,
@@ -8,7 +8,7 @@ export const checkSessionIdExists = async (
   const sessionId = request.cookies.sessionId
 
   if (!sessionId) {
-    return reply.status(HTTP_CODES.UNAUTHORIZED).send({
+    return reply.status(httpCodes.UNAUTHORIZED).send({
       error: 'Unauthorized',
     })
   }
