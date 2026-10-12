@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { httpCodes } from '../utils/http-code'
+import { httpCodes } from '@/utils/http-code'
 
 export const checkSessionIdExists = async (
   request: FastifyRequest,

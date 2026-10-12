@@ -1,10 +1,7 @@
-import { FastifyReply, FastifyRequest } from 'fastify'
-import { knex } from '../database'
+import { FastifyRequest } from 'fastify'
+import { knex } from '@/database'
 
-export const summaryTransactions = async (
-  request: FastifyRequest,
-  _: FastifyReply,
-) => {
+export const summaryTransactions = async (request: FastifyRequest) => {
   const { sessionId } = request.cookies
 
   const summary = await knex('transactions')

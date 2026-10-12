@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
-import { checkSessionIdExists } from '../middlewares/check-session-id-exists'
+import { checkSessionIdExists } from '@/middlewares/check-session-id-exists'
 import { createTransaction } from './create-transaction'
-import { getAllTransactionsRoute } from './get-all-transactions'
+import { getAllTransactions } from './get-all-transactions'
 import { getTransactionById } from './get-transaction-by-id'
 import { summaryTransactions } from './summary-transactions'
 
@@ -11,7 +11,7 @@ export const transactionsRoutes = async (app: FastifyInstance) => {
     {
       preHandler: [checkSessionIdExists],
     },
-    getAllTransactionsRoute,
+    getAllTransactions,
   )
 
   app.get(

@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { randomUUID } from 'node:crypto'
 import z from 'zod'
-import { knex } from '../database'
-import { httpCodes } from '../utils/http-code'
+import { knex } from '@/database'
+import { httpCodes } from '@/utils/http-code'
 
 export const createTransaction = async (
   request: FastifyRequest,
