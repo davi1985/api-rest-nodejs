@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { randomUUID } from 'node:crypto'
 import z from 'zod'
 import { knex } from '@/db'
+import { env } from '@/env'
 import { httpCodes } from '@/utils/http-code'
 
 export const createTransaction = async (
@@ -24,6 +25,9 @@ export const createTransaction = async (
     sessionId = randomUUID()
     reply.setCookie('sessionId', sessionId, {
       path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 7, // 7 days
     })
   }
