@@ -3,70 +3,104 @@ import { randomUUID } from 'node:crypto'
 import { knex } from '../database'
 import z from 'zod'
 import { HTTP_CODES } from '../utils/http-code'
+import { checkSessionIdExists } from '../middlewares/check-session-id-exists'
 
 export const transactionsRoutes = async (app: FastifyInstance) => {
-  app.get('/', async (_, reply) => {
-    const transactions = await knex('transactions').select()
+  app.get(
+    '/',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const { sessionId } = request.cookies
 
-    return { transactions }
-  })
+      const transactions = await knex('transactions')
+        .where({ session_id: sessionId })
+        .select()
 
-  app.get('/:id', async (request, reply) => {
-    const getTransactionParamsSchema = z.object({
-      id: z.uuid(),
-    })
+      return { transactions }
+    },
+  )
 
-    const { id } = getTransactionParamsSchema.parse(request.params)
-
-    const transaction = await knex('transactions').where({ id }).first()
-
-    if (!transaction) {
-      return reply.status(HTTP_CODES.NOT_FOUND).send({
-        error: 'Transaction not found',
+  app.get(
+    '/:id',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const getTransactionParamsSchema = z.object({
+        id: z.uuid(),
       })
-    }
 
-    return { transaction }
-  })
+      const { id } = getTransactionParamsSchema.parse(request.params)
+      const { sessionId } = request.cookies
 
-  app.post('/', async (request, reply) => {
-    const createTransactionBodySchema = z.object({
-      title: z.string(),
-      amount: z.number(),
-      type: z.enum(['credit', 'debit']),
-    })
+      const transaction = await knex('transactions')
+        .where({ session_id: sessionId, id })
+        .first()
 
-    const { title, amount, type } = createTransactionBodySchema.parse(
-      request.body,
-    )
+      if (!transaction) {
+        return reply.status(HTTP_CODES.NOT_FOUND).send({
+          error: 'Transaction not found',
+        })
+      }
 
-    let sessionId = request.cookies.sessionId
+      return { transaction }
+    },
+  )
 
-    if (!sessionId) {
-      sessionId = randomUUID()
-      reply.setCookie('sessionId', sessionId, {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
+  app.post(
+    '/',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const createTransactionBodySchema = z.object({
+        title: z.string(),
+        amount: z.number(),
+        type: z.enum(['credit', 'debit']),
       })
-    }
 
-    const transaction = await knex('transactions')
-      .insert({
-        id: randomUUID(),
-        title,
-        amount: type === 'credit' ? amount : amount * -1,
-        session_id: sessionId,
-      })
-      .returning('*')
+      const { title, amount, type } = createTransactionBodySchema.parse(
+        request.body,
+      )
 
-    return reply.status(HTTP_CODES.CREATED).send({ transaction })
-  })
+      let sessionId = request.cookies.sessionId
 
-  app.get('/summary', async (_, reply) => {
-    const summary = await knex('transactions')
-      .sum('amount', { as: 'amount' })
-      .first()
+      if (!sessionId) {
+        sessionId = randomUUID()
+        reply.setCookie('sessionId', sessionId, {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7, // 7 days
+        })
+      }
 
-    return { summary }
-  })
+      const transaction = await knex('transactions')
+        .insert({
+          id: randomUUID(),
+          title,
+          amount: type === 'credit' ? amount : amount * -1,
+          session_id: sessionId,
+        })
+        .returning('*')
+
+      return reply.status(HTTP_CODES.CREATED).send({ transaction })
+    },
+  )
+
+  app.get(
+    '/summary',
+    {
+      preHandler: [checkSessionIdExists],
+    },
+    async (request, reply) => {
+      const { sessionId } = request.cookies
+      const summary = await knex('transactions')
+        .where({ session_id: sessionId })
+        .sum('amount', { as: 'amount' })
+        .first()
+
+      return { summary }
+    },
+  )
 }
