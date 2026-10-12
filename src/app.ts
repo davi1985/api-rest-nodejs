@@ -4,18 +4,26 @@ import { z } from 'zod'
 import { transactionsRoutes } from '@/routes'
 import { httpCodes } from '@/utils/http-code'
 
-export const buildApp = () => {
-  const app = fastify()
+export const app = () => {
+  const logger = {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'SYS:standard',
+        singleLine: true,
+        ignore: 'pid,hostname',
+      },
+    },
+  }
+
+  const app = fastify({
+    logger,
+  })
 
   app.register(cookie)
 
-  app.addHook('preHandler', async (request) => {
-    console.log(
-      `${new Date().toISOString()} [${request.method}] ${request.url}`,
-    )
-  })
-
-  app.setErrorHandler((error, _request, reply) => {
+  app.setErrorHandler((error, request, reply) => {
     if (error instanceof z.ZodError) {
       return reply.status(httpCodes.BAD_REQUEST).send({
         error: 'Validation error',
@@ -23,7 +31,7 @@ export const buildApp = () => {
       })
     }
 
-    console.error(error)
+    request.log.error({ err: error }, 'Unhandled request error')
 
     return reply
       .status(httpCodes.INTERNAL_SERVER_ERROR)

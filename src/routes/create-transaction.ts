@@ -32,7 +32,7 @@ export const createTransaction = async (
     })
   }
 
-  const transaction = await knex('transactions')
+  const [transaction] = await knex('transactions')
     .insert({
       id: randomUUID(),
       title,
