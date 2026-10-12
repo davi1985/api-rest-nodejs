@@ -1,5 +1,5 @@
 import { FastifyRequest } from 'fastify'
-import { knex } from '@/database'
+import { knex } from '@/db'
 
 export const getAllTransactions = async (request: FastifyRequest) => {
   const { sessionId } = request.cookies

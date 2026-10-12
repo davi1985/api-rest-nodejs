@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import z from 'zod'
-import { knex } from '@/database'
+import { knex } from '@/db'
 import { httpCodes } from '@/utils/http-code'
 
 export const getTransactionById = async (
