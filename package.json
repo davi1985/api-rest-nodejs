@@ -10,11 +10,12 @@
     "start": "tsx src/server.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "node --no-warnings --import tsx --test \"test/**/*.spec.ts\""
   },
   "devDependencies": {
     "@eslint/js": "^10",
-    "@types/node": "^26.6.4",
+    "@types/node": "^26.6.5",
     "eslint": "^10",
     "eslint-config-prettier": "^10",
     "globals": "^17.13.0",
