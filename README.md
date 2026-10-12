@@ -24,7 +24,7 @@ issues or reuses a `sessionId` cookie and uses it to scope every read and write.
 | Validation         | Zod (environment variables and request payloads)    |
 | Database           | SQLite via Knex (query builder + migrations)        |
 | Dev runner         | tsx (runs TypeScript directly, no build step)       |
-| Lint / formatting  | ESLint (type-aware) + Prettier                      |
+| Lint               | ESLint (type-aware)                                  |
 
 ## Requirements
 
@@ -74,9 +74,23 @@ See `.env.example` for a ready-to-use template.
 | `yarn lint:fix`    | Run ESLint and apply automatic fixes                 |
 | `yarn test`        | Run tests using the `.env.test` configuration        |
 
-Before running tests, create `.env.test` from `.env.test.example`. The test suite
-applies pending migrations to the SQLite database configured there, separate
-from the development database.
+Create the test environment file before running tests:
+
+```bash
+cp .env.test.example .env.test
+yarn test
+```
+
+The test script loads `.env.test`; the test suite applies pending migrations to
+that SQLite database before running. This keeps test data separate from the
+development database.
+
+## Logging
+
+The API uses Fastify's Pino logger with `pino-pretty` formatting. It logs each
+request's method and URL, then its response status and duration. Timestamps use
+the machine's local timezone. Unexpected request errors are logged server-side;
+the API returns a generic `500` response without exposing internal details.
 
 ## API
 
@@ -154,7 +168,7 @@ yarn knex migrate:list            # list applied / pending migrations
 src/
 ├── @types/
 │   └── knex.d.ts                 # Knex table type augmentation
-├── app.ts                        # buildApp(): creates and configures Fastify
+├── app.ts                        # app(): creates and configures Fastify
 ├── server.ts                     # entry point: builds the app and listens
 ├── db/
 │   └── index.ts                  # Knex/SQLite config and instance
